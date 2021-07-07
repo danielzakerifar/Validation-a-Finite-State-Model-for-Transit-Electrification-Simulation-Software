@@ -1,0 +1,24 @@
+MODULE main
+VAR
+   location: {west,east};
+   status:   {charged,arrived};
+   stateOfCharging: 0..1000;
+ASSIGN
+   init(status):=charged;
+   init(stateOfCharging):=100;
+   next(status):=case
+                   (status=charged) : arrived;
+                   (status=arrived): charged;
+                   TRUE: {arrived,charged};
+                   esac;
+   next(location):=case
+                   (location=west) & (status=charged) & (stateOfCharging>20):east;
+                   (location=east) & (status=charged) & (stateOfCharging>20):west;
+                   TRUE:location;
+                   esac;
+    
+  next(stateOfCharging):=case
+              (status=arrived)   &  stateOfCharging<92  :  stateOfCharging + 8;
+              (status=charged)   &  stateOfCharging>20  :  stateOfCharging - 10;
+              TRUE: stateOfCharging;
+                  esac;
